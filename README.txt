@@ -4,5 +4,5 @@ CCID: hyunseo
 Name: Lucas Ma
 CCID: lucas3
 
-Name: Yimage Addus 2
+Name: Yimage Addus
 CCID: yimage
