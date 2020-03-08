@@ -40,25 +40,42 @@ def pidTaken(pid, c): #HELPER pid
         if pid == str(each["pid"]):
             taken = True
 
+
     return taken
 
+def existSID(c):
+    mylist = []
 
+    conn = sqlite3.connect('./movies.db')
+    conn.row_factory = sqlite3.Row	
+    c = conn.cursor()
 
-def postSale(c):
+    c.execute("SELECT sid FROM sales;")	
+    rows = c.fetchall()
+    for	each in rows:					
+        mylist.append(str(each["sid"]))
+    return mylist
 
+def postSale(c, lister):
+
+    # get PID
     pid = input("Enter product ID (or leave balnk): ")
-    while pid != "" or 
-    (len(pid) > 4 or pid[0].lower() != 'p' or pidTaken(pid.upper(), c) == True):
+    while pid != "" and (len(pid) > 4 or pid[0].lower() != 'p' or pidTaken(pid.upper(), c) == True):
         print("Invalid input or pid already taken")
         pid = input("Enter product ID (or leave blank): ")
+    if pid == "":
+        pid = None
         
+    # get edate as datetime object
     edate = getDate()
 
+    #gets prodct description
     descr = input("product description: ")
     while descr == "":
         print("Invalid description (cannot be blank)")
         descr = input("product description: ")
 
+    # gets condtion
     conditionTypes = ["mint", "new", "used", "broken"]
     condition = input("condition of product (Mint, New, Used, broken): ")
     while condition.lower() not in conditionTypes:
@@ -66,23 +83,52 @@ def postSale(c):
         condition = input("condition of product (Mint, New, Used, broken): ")
     condition = condition.capitalize()
 
-
+    # gets reserved price
     rPrice = input("reservered price (or leave blank): ")
-    while rPrice != "" or (rPrice.isdigit() == False and rPrice.isdecimal() == False):
+    while rPrice != "" and (rPrice.isdigit() == False and rPrice.isdecimal() == False):
         print("Invalid input. must be number or blank")
         rPrice = input("reservered price (or leave blank): ")
+    if rPrice == "":
+        rPrice = None
+    else: rPrice = int(rPrice)
 
-    ### Input data
+    #find unique sid
+    sidExist = existSID(c)
+    sid = 1
+    for i in range(1,100):
+        if i not in sidExist:
+            sid = i
+            break
+
+
+    # insert data into table
+    conn = sqlite3.connect('./movies.db')	
+    c.executescript("INSERT INTO sales(sid, lister, pid, edate, descr, cond, rprice) values (?, ?, ?, ?, ?)",
+     (sid, lister, pid, edate, descr, condition, rprice))
+    conn.commit()
+    conn.close()
     return None
-
-
-
-
-
 
 def main():
     conn = sqlite3.connect('./movies.db')	
     c =	conn.cursor()	
+    tables(c)
+    conn.commit()
+    values(c)
+    conn.commit()
+
+    # opertations ----
+    postSale(c)
+    # ----------------
+
+    conn.close()
+
+
+    return None
+
+
+
+def tables(c):
     c.executescript('''
     drop table if exists previews;
     drop table if exists reviews;
@@ -160,12 +206,6 @@ def main():
     foreign key (pid) references products,
     foreign key (reviewer) references users
     );''')
-    conn.commit()
-    values(c)
-    conn.commit()
-    postSale(c)
-    conn.commit()
-    conn.close()
 
 def values(c):
     c.executescript(''' insert into users values ('mc@gmail.com','Michael Choi','abcd','Edmonton, AB','M');
@@ -203,10 +243,4 @@ def values(c):
     insert into previews values (2, 'N02','ks@gmail.com', 2, 'great quality', '2018-09-11');
     insert into previews values (3, 'P02', 'mk@abc.com', 5, 'amazing car', date('now','-9 months'));''')
 
-
-
 main()
-
-
-
-
