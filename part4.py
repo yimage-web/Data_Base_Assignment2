@@ -118,7 +118,7 @@ def main():
     conn.commit()
 
     # opertations ----
-    postSale(c)
+    postSale(c, lister)
     # ----------------
 
     conn.close()
