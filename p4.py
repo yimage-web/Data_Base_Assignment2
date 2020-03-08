@@ -103,9 +103,8 @@ def postSale(c, lister):
         if sid not in sidExist:
             break
 
-
+    data = (sid, lister, pid, edate, descr, condition, rPrice)
     # insert data into table
 
-    c.executescript("INSERT INTO sales(sid, lister, pid, edate, descr, cond, rprice) values (?, ?, ?, ?, ?)",
-     (sid, lister, pid, edate, descr, condition, rPrice))
+    c.execute( "INSERT INTO sales (sid, lister, pid, edate, descr, cond, rprice) values (?, ?, ?, ?, ?, ?, ?)", data);
     return None
