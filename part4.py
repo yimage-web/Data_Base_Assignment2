@@ -59,8 +59,11 @@ def existSID(c):
 def postSale(c, lister):
 
     # get PID
+    alphabet = ['a','b','c','d','e','f','g','h','i','j',
+               'k','l','m','n','o','p','q','r','s','t',
+               'u','v','w','x','y','z']
     pid = input("Enter product ID (or leave balnk): ")
-    while pid != "" and (len(pid) > 4 or pid[0].lower() != 'p' or pidTaken(pid.upper(), c) == True):
+    while pid != "" and (len(pid) > 4 or pid[0].lower() not in alphabet or pidTaken(pid.upper(),c) == True):
         print("Invalid input or pid already taken")
         pid = input("Enter product ID (or leave blank): ")
     if pid == "":
@@ -94,10 +97,12 @@ def postSale(c, lister):
 
     #find unique sid
     sidExist = existSID(c)
-    sid = 1
     for i in range(1,100):
-        if i not in sidExist:
-            sid = i
+        if i<10: 
+            sid = "S0"+str(i)
+        else:
+            sid = "S"+str(i)
+        if sid not in sidExist:
             break
 
 
