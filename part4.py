@@ -43,7 +43,7 @@ def pidTaken(pid, c): #HELPER pid
 
     return taken
 
-def existSID(c):
+def existSID(c): #HELPER sid
     mylist = []
 
     conn = sqlite3.connect('./movies.db')
